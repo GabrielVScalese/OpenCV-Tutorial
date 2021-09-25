@@ -2,6 +2,13 @@ import os
 import cv2
 import time
 
+import pafy
+
+url = 'https://www.youtube.com/watch?v=wtH-hdOF1uA'
+videoPafy = pafy.new(url)
+
+best = videoPafy.getbest(preftype='mp4')
+
 # Define cores para fazer as marcacoes de objeto
 COLORS = [(0,255, 255), (255, 255, 0), (0, 255, 0), (255, 0, 0)]
 
@@ -10,7 +17,7 @@ class_names = []
 with open('coco.names', 'r') as f:
     class_names = [cname.strip() for cname in f.readlines()]
 
-cap = cv2.VideoCapture('./videos/video.mp4')
+cap = cv2.VideoCapture(best.url)
 
 net = cv2.dnn.readNet('yolov4-tiny.weights', 'yolov4-tiny.cfg')
 model = cv2.dnn_DetectionModel(net)
@@ -37,7 +44,7 @@ while True:
         if foundAnimal:
             animalTurns = animalTurns + 1
 
-        if class_names[classId[0]] == 'cat' or class_names[classId[0]] == 'dog':
+        if class_names[classId[0]] == 'dog':
             if not foundAnimal:
                 foundAnimal = True
                 start = time.time()
